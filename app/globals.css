@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   RedSloth design tokens
+   Palette: white / black / ONE red (#C41D21).
+   Black/white alpha variants only, for borders/shadows/bevels.
+   Type: Poppins headings, Inter 200–300 body.
+   Sizes: 12/14/16/20/24/32/48/72. Radii: 8/12/16.
+   Shadows: one token set (--shadow-card).
+   Spacing: multiples of 4px only.
+   ============================================================ */
+:root {
+  --red: #c41d21;
+  --black: #000000;
+  --white: #ffffff;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.08);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis handles smoothing; CSS smooth-scroll would fight it */
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Thin Inter on white needs black text for AA contrast — never gray body text. */
+h1, h2, h3 {
+  font-family: Poppins, Inter, system-ui, sans-serif;
+  color: var(--black);
+}
+
+::selection {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* Visible focus ring on everything interactive (AA). */
+:focus-visible {
+  outline: 2px solid var(--black);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* On the red panel, the ring flips to white so it stays visible. */
+.on-red :focus-visible {
+  outline-color: var(--white);
+}
+
+/* ============================================================
+   Buttons — light-sweep + bevel-alpha.
+   Bevel: inset 1px white-alpha top highlight + inset black-alpha
+   bottom edge. Sweep: soft diagonal highlight crossing on hover.
+   Hover animation uses ONLY background-position / opacity /
+   box-shadow / filter. No scale, transform or translate anywhere.
+   ============================================================ */
+.btn-sweep {
+  position: relative;
+  overflow: hidden;
+  /* Diagonal white-alpha sweep, parked off-canvas until hover. */
+  background-image: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgb(255 255 255 / 0.35) 50%,
+    transparent 68%
+  );
+  background-size: 250% 100%;
+  background-position: 120% 0;
+  background-repeat: no-repeat;
+  transition:
+    background-position 350ms ease,
+    opacity 200ms ease,
+    box-shadow 250ms ease,
+    filter 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+.btn-sweep:hover {
+  background-position: -120% 0;
+}
+.btn-bevel {
+  /* Bevel: white-alpha top highlight, black-alpha bottom edge. */
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.55),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18),
+    var(--shadow-card);
+}
+.btn-bevel-dark {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 rgb(0 0 0 / 0.35),
+    var(--shadow-card);
+}
+
+/* ============================================================
+   Hero automation loop — the travelling dot.
+   offset-path follows the SVG loop path; paused under
+   prefers-reduced-motion. The loop itself is static SVG,
+   so the diagram reads fine with animation off.
+   ============================================================ */
+.loop-dot {
+  offset-path: path('M 160 24 C 256 24 296 64 296 120 C 296 176 256 216 160 216 C 64 216 24 176 24 120 C 24 64 64 24 160 24 Z');
+  offset-rotate: 0deg;
+  animation: loop-travel 6s linear infinite;
+}
+@keyframes loop-travel {
+  from { offset-distance: 0%; }
+  to { offset-distance: 100%; }
+}
+
+/* Hero rebus glyphs — inline SVG, sized in em so they track the
+   text's x-height and sit on the baseline. */
+.rebus-glyph {
+  display: inline-block;
+  height: 0.82em;
+  width: auto;
+  vertical-align: -0.08em;
+}
+
+/* Goal-gradient progress line in How it works. */
+.goal-fill {
+  transition: transform 200ms ease-out;
+}
+
+/* Respect reduced motion: no Lenis (see SmoothScroll), no
+   non-essential animation anywhere on the page. */
+@media (prefers-reduced-motion: reduce) {
+  .loop-dot {
+    animation: none;
+  }
+  .btn-sweep {
+    transition: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
