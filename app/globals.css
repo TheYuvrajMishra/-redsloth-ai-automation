@@ -98,20 +98,12 @@ h1, h2, h3 {
 }
 
 /* ============================================================
-   Hero automation loop — the travelling dot.
-   offset-path follows the SVG loop path; paused under
-   prefers-reduced-motion. The loop itself is static SVG,
-   so the diagram reads fine with animation off.
+   Hero automation loop — the travelling dot runs on SMIL
+   (<animateMotion> in Hero.tsx) so it follows the viewBox path
+   at any width. It is paused in JS under prefers-reduced-motion
+   (see Hero.tsx); there is no CSS offset-path version because
+   offset-path coordinates do not scale with the container.
    ============================================================ */
-.loop-dot {
-  offset-path: path('M 160 24 C 256 24 296 64 296 120 C 296 176 256 216 160 216 C 64 216 24 176 24 120 C 24 64 64 24 160 24 Z');
-  offset-rotate: 0deg;
-  animation: loop-travel 6s linear infinite;
-}
-@keyframes loop-travel {
-  from { offset-distance: 0%; }
-  to { offset-distance: 100%; }
-}
 
 /* Hero rebus glyphs — inline SVG, sized in em so they track the
    text's x-height and sit on the baseline. */
@@ -130,9 +122,6 @@ h1, h2, h3 {
 /* Respect reduced motion: no Lenis (see SmoothScroll), no
    non-essential animation anywhere on the page. */
 @media (prefers-reduced-motion: reduce) {
-  .loop-dot {
-    animation: none;
-  }
   .btn-sweep {
     transition: none;
   }
